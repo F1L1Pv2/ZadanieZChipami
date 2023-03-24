@@ -34,11 +34,67 @@ class MainActivity : AppCompatActivity() {
                 R.id.checkOffModeRadioButton -> showCheckOffMode()
             }
         }
+
+
+        // Ustawienie trybu dodawania
+        val vegetablesCheckboxGroup = findViewById<ChipGroup>(R.id.vegetablesCheckboxGroup)
+        val deliMeatsCheckboxGroup = findViewById<ChipGroup>(R.id.deliMeatsCheckboxGroup)
+        val breadCheckboxGroup = findViewById<ChipGroup>(R.id.breadCheckboxGroup)
+
+        // Wyczyszczenie grup
+        vegetablesCheckboxGroup.removeAllViews()
+        deliMeatsCheckboxGroup.removeAllViews()
+        breadCheckboxGroup.removeAllViews()
+
+        val shoppingItemList = shoppingItems.values.flatten()
+        for (item in shoppingItemList) {
+            val checkbox = Chip(this)
+            checkbox.text = item
+            checkbox.isCheckable = true
+            checkbox.tag = shoppingItems.entries.firstOrNull { it.value.contains(item) }?.key
+
+            // Ustawienie listenera na zmianę stanu checkboxa
+            checkbox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    selectedItems.add(item)
+                } else {
+                    selectedItems.remove(item)
+                }
+            }
+
+            // Ustawienie koloru checkboxa
+            when (checkbox.tag) {
+                "Warzywa" -> {
+                    checkbox.chipBackgroundColor =
+                        resources.getColorStateList(R.color.vegetablesColor)
+                }
+                "Mięsa Delikatesowe" -> {
+                    checkbox.chipBackgroundColor =
+                        resources.getColorStateList(R.color.deliMeatsColor)
+                }
+                "Pieczywo" -> {
+                    checkbox.chipBackgroundColor = resources.getColorStateList(R.color.breadColor)
+                }
+            }
+
+            // Dodanie checkboxa do odpowiedniej grupy
+            when (checkbox.tag) {
+                "Warzywa" -> vegetablesCheckboxGroup.addView(checkbox)
+                "Mięsa Delikatesowe" -> deliMeatsCheckboxGroup.addView(checkbox)
+                "Pieczywo" -> breadCheckboxGroup.addView(checkbox)
+            }
+        }
+
+
     }
 
     @SuppressLint("UseCompatLoadingForColorStateLists")
     private fun showAddMode() {
-        //@TODO
+        val checkboxesLayout = findViewById<View>(R.id.checkboxesLayout)
+        val chipsLayout = findViewById<View>(R.id.chipsLayout)
+        // Pokazanie checkboxów do dodawania produktów
+        checkboxesLayout.visibility = View.VISIBLE
+        chipsLayout.visibility = View.GONE
     }
 
     @SuppressLint("UseCompatLoadingForColorStateLists")
