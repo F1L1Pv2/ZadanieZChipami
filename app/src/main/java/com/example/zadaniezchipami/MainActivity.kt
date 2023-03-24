@@ -99,6 +99,50 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("UseCompatLoadingForColorStateLists")
     private fun showCheckOffMode() {
-        //@TODO
+        val checkboxesLayout = findViewById<View>(R.id.checkboxesLayout)
+        val chipsLayout = findViewById<View>(R.id.chipsLayout)
+        // Pokazanie chipsów do odznaczania produktów
+        checkboxesLayout.visibility = View.GONE
+        chipsLayout.visibility = View.VISIBLE
+
+        // Wyczyszczenie grupy chipsów
+        val chipsGroup = findViewById<ChipGroup>(R.id.chipsGroup)
+        chipsGroup.removeAllViews()
+
+        // Dodanie chipsów do grupy
+        for ((groupName, items) in shoppingItems) {
+            for (item in items) {
+                if (selectedItems.contains(item)) {
+                    val chip = Chip(this)
+                    chip.text = item
+                    chip.isCloseIconVisible = true
+                    chip.tag = groupName
+
+                    // Ustawienie koloru chipsa
+                    when (groupName) {
+                        "Warzywa" -> {
+                            chip.chipBackgroundColor =
+                                resources.getColorStateList(R.color.vegetablesColor)
+                        }
+                        "Mięsa Delikatesowe" -> {
+                            chip.chipBackgroundColor =
+                                resources.getColorStateList(R.color.deliMeatsColor)
+                        }
+                        "Pieczywo" -> {
+                            chip.chipBackgroundColor =
+                                resources.getColorStateList(R.color.breadColor)
+                        }
+                    }
+                    // Dodanie chipsa do grupy
+                    chipsGroup.addView(chip)
+
+                    // Ustawienie listenera na kliknięcie ikony zamknięcia
+                    chip.setOnCloseIconClickListener {
+                        selectedItems.remove(item)
+                        chipsGroup.removeView(chip)
+                    }
+                }
+            }
+        }
     }
 }
